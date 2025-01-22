@@ -1,61 +1,58 @@
-name: Jajanken deployment
+name: deploy
+
 on:
   push:
+    branches:
+      - main
 
+env:
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_DATABASE: ${{ secrets.DB_DATABASE }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_URL: ${{ secrets.DB_URL}}
+  JWT_SECRET_TOKEN: ${{ secrets.JWT_SECRET_TOKEN }}
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20]
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          submodules: "true"
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+          node-version: 22
+      - uses: mirromutth/mysql-action@v1.1
         with:
-          version: 10
+          mysql version: "9.1"
+          mysql database: ${{ secrets.DB_DATABASE }}
+          mysql user: ${{ secrets.DB_USER }}
+          mysql password: ${{ secrets.DB_PASSWORD }}
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Install Packages
+        run: npm install
+
+      - name: Build App
+        run: npm run build
+
+      - name: Install Package for production
+        run: rm -r node_modules && npm install --omit=dev
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: unnecessary
 
-      - name: Install dependencies
-        run: |
-          echo "node-linker=hoisted" >> .npmrc
-          pnpm install
+      - name: Adding Known Hosts
+        run: ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
-      - name: Build
-        run: |
-          pnpm run build
+      - name: Deploy with rsync Build
+        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" build/ ${{ secrets.USER }}@${{ secrets.HOST }}:/etc/var/www/open-quittance/build
 
-      - name: Prepare production dependencies
-        run: pnpm install --omit=dev
+      - name: Deploy NodeModule
+        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" node_modules/ ${{ secrets.USER }}@${{ secrets.HOST }}:/etc/var/www/open-quittance/node_modules
 
-      - name: 🚀 Deploy Build
-        uses: burnett01/rsync-deployments@7.0.1
-        with:
-          switches: -avzr --delete
-          path: dist/
-          remote_path: ${{ secrets.PATH }}
-          remote_host: ${{ secrets.HOST }}
-          remote_port: ${{ secrets.PORT }}
-          remote_user: ${{ secrets.USER }}
-          remote_key: ${{ secrets.SSH_KEY }}
-
-      - name: 🚀 Deploy production dependencies
-        uses: burnett01/rsync-deployments@7.0.1
-        with:
-          switches: -avzr
-          path: node_modules/
-          remote_path: ${{ secrets.PATH }}node_modules/
-          remote_host: ${{ secrets.HOST }}
-          remote_port: ${{ secrets.PORT }}
-          remote_user: ${{ secrets.USER }}
-          remote_key: ${{ secrets.SSH_KEY }}
+      - name: Deploy migrations files
+        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" migrations/ ${{ secrets.USER }}@${{ secrets.HOST }}:/etc/var/www/open-quittance/migrations
