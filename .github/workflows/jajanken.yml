@@ -19,7 +19,8 @@ jobs:
         run: |
           node --version
           npm --version
-          dir .
+      - name: dir
+        run: dir
 
       - name: Install Packages
         run: npm ci
