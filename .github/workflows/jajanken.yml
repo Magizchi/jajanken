@@ -14,7 +14,10 @@ jobs:
         node-version: [22]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: "true"
 
       - name: User Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
