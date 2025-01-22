@@ -1,0 +1,11 @@
+{
+  "trailingComma": "es5",
+  "overrides": [
+    {
+      "files": ["*.ts", "*.js"],
+      "options": {
+        "proseWrap": "always"
+      }
+    }
+  ]
+}
