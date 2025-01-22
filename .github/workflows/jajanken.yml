@@ -15,9 +15,9 @@ jobs:
         with:
           node-version: 20
 
-      - name: Checkout Build folder
+      - name: Node V
         run: |
-          cat ./packages.json
+          node --version
 
       - name: Install Packages
         run: npm ci
