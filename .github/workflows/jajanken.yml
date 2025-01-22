@@ -37,25 +37,25 @@ jobs:
       - name: Install Package for production
         run: npm install --omit=dev
 
-      # - name: Deploy dist
-      #   uses: burnett01/rsync-deployments@7.0.2
-      #   with:
-      #     switches: -avzr --delete
-      #     path: dist/
-      #     remote_path: ${{ secrets.PATH }}
-      #     remote_host: ${{ secrets.HOST }}
-      #     remote_port: ${{ secrets.PORT }}
-      #     remote_user: ${{ secrets.USER }}
-      #     remote_key: ${{ secrets.SSH_KEY }}
+      - name: Deploy dist
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -avzr --delete
+          path: dist/
+          remote_path: ${{ secrets.PATH }}
+          remote_host: ${{ secrets.HOST }}
+          remote_port: ${{ secrets.PORT }}
+          remote_user: ${{ secrets.USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
       
-      # - name: Deploy node modules
-      #   uses: burnett01/rsync-deployments@7.0.2
-      #   with:
-      #     switches: -avzr --delete
-      #     path: node_modules/
-      #     remote_path: ${{ secrets.PATH }}
-      #     remote_host: ${{ secrets.HOST }}
-      #     remote_port: ${{ secrets.PORT }}
-      #     remote_user: ${{ secrets.USER }}
-      #     remote_key: ${{ secrets.SSH_KEY }}
+      - name: Deploy node modules
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -avzr --delete
+          path: node_modules/
+          remote_path: ${{ secrets.PATH }}
+          remote_host: ${{ secrets.HOST }}
+          remote_port: ${{ secrets.PORT }}
+          remote_user: ${{ secrets.USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
         
