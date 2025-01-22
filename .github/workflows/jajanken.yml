@@ -23,10 +23,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Show files
-        run: |
-          dir
-
       - name: Install Packages
         run: npm install
 
@@ -36,25 +32,18 @@ jobs:
       - name: Install Package for production
         run: npm install --omit=dev
 
-      - name: Deploy dist
-        uses: burnett01/rsync-deployments@7.0.2
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
         with:
-          switches: -avzr --delete
-          path: dist/
-          remote_path: ${{ secrets.PATH }}
-          remote_host: ${{ secrets.HOST }}
-          remote_port: ${{ secrets.PORT }}
-          remote_user: ${{ secrets.USER }}
-          remote_key: ${{ secrets.SSH_KEY }}
-      
-      - name: Deploy node modules
-        uses: burnett01/rsync-deployments@7.0.2
-        with:
-          switches: -avzr --delete
-          path: node_modules/
-          remote_path: ${{ secrets.PATH }}
-          remote_host: ${{ secrets.HOST }}
-          remote_port: ${{ secrets.PORT }}
-          remote_user: ${{ secrets.USER }}
-          remote_key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: unnecessary
+
+      - name: Adding Known Hosts
+        run: ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy with rsync Build
+        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" dist/ ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.PATH }}/dist
+
+      - name: Deploy NodeModule
+        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" node_modules/ ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.PATH }}/node_modules
         
