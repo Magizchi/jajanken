@@ -39,7 +39,7 @@ jobs:
         run: ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy with rsync Build
-        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" dist/ ${{ secrets.USER }}@${{ secrets.HOST }}:/etc/var/www/jajanken/dist
+        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" dist/ ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.PATH }}
 
       # - name: Deploy NodeModule
       #   run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" node_modules/ ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.PATH }}/node_modules
