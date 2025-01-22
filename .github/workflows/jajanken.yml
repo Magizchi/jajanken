@@ -15,6 +15,10 @@ jobs:
         with:
           node-version: 20
 
+      - name: Checkout Build folder
+        run: |
+          dir
+
       - name: Install Packages
         run: npm ci
 
