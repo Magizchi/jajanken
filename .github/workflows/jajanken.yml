@@ -17,7 +17,7 @@ jobs:
 
       - name: Checkout Build folder
         run: |
-          dir
+          cat ./packages.json
 
       - name: Install Packages
         run: npm ci
