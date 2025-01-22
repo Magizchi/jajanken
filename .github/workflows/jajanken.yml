@@ -35,8 +35,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: unnecessary
 
-      # - name: Adding Known Hosts
-      #   run: ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+      - name: Adding Known Hosts
+        run: ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
       # - name: Deploy with rsync Build
       #   run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" dist/ ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.PATH }}/build
