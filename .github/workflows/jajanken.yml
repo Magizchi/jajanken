@@ -1,42 +1,61 @@
 name: Jajanken deployment
-
 on:
   push:
-    branches:
-      - main
+
 
 jobs:
-  build:
-    runs-on: ubuntu-24.04
-
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          node-version: 20
-      
-      - name: Install Packages
-        run: npm install
+          submodules: "true"
 
-      - name: Build App
-        run: npm run build
-
-      - name: Install Package for production
-        run: npm install --omit=dev
-
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: unnecessary
+          version: 10
 
-      - name: Adding Known Hosts
-        run: ssh-keyscan -p ${{ secrets.PORT }} -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
 
-      - name: Deploy with rsync Build
-        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" dist/ ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.PATH }}/build
+      - name: Install dependencies
+        run: |
+          echo "node-linker=hoisted" >> .npmrc
+          pnpm install
 
-      - name: Deploy NodeModule
-        run: rsync -avz -e "ssh -p ${{ secrets.PORT }}" node_modules/ ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.PATH }}/node_modules
+      - name: Build
+        run: |
+          pnpm run build
 
+      - name: Prepare production dependencies
+        run: pnpm install --omit=dev
+
+      - name: 🚀 Deploy Build
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+          path: dist/
+          remote_path: ${{ secrets.PATH }}
+          remote_host: ${{ secrets.HOST }}
+          remote_port: ${{ secrets.PORT }}
+          remote_user: ${{ secrets.USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
+
+      - name: 🚀 Deploy production dependencies
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr
+          path: node_modules/
+          remote_path: ${{ secrets.PATH }}node_modules/
+          remote_host: ${{ secrets.HOST }}
+          remote_port: ${{ secrets.PORT }}
+          remote_user: ${{ secrets.USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
