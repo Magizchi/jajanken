@@ -18,6 +18,8 @@ jobs:
       - name: Node V
         run: |
           node --version
+          npm --version
+          npm install
 
       - name: Install Packages
         run: npm ci
