@@ -26,7 +26,7 @@ jobs:
 
       - name: Show files
         run: |
-          ll
+          dir
 
       - name: Install Packages
         run: npm install
