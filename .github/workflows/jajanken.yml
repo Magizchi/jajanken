@@ -23,6 +23,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          
+      - name: Show files
+        run: |
+          dir
 
       - name: Install Packages
         run: npm install
