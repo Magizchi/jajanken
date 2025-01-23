@@ -14,7 +14,8 @@
 				"formulahendry.auto-rename-tag",
 				"bradlc.vscode-tailwindcss",
 				"rvest.vs-code-prettier-eslint",
-				"dbaeumer.vscode-eslint"
+				"dbaeumer.vscode-eslint",
+				"pflannery.vscode-versionlens"
 			]
 		}
 	}
