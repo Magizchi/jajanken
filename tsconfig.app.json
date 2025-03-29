@@ -20,7 +20,18 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Absolute import */
+    "baseUrl": "./src",
+    "paths": {
+      "@models/*": ["models/*"],
+      "@components/*": ["components/*"],
+      "@contexts/*": ["contexts/*"],
+      "@routes/*": ["routes/*"],
+      "@mocks/*": ["mocks/*"],
+      "@assets/*": ["assets/*"]
+    }
   },
   "include": ["src"]
 }

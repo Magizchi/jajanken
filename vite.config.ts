@@ -13,4 +13,21 @@ export default defineConfig({
       usePolling: true
     },
   },
+  resolve: {
+    alias: {
+      '@': '/src',
+      '@models': '/src/models',
+      '@constants': '/src/constants',
+      '@components': '/src/components',
+      '@pages': '/src/pages',
+      '@routes': '/src/routes',
+      '@contexts': '/src/contexts',
+      '@template': '/src/template',
+      '@mocks': '/src/mocks',
+      '@utils': '/src/utils',
+      '@layouts': '/src/layouts',
+      '@hooks': '/src/hooks',
+      '@assets': '/src/assets'
+    }
+  },
 });
