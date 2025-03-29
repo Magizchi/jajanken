@@ -1,1 +1,37 @@
 @import "tailwindcss";
+
+/* Text */
+@font-face {
+  font-family: "rainly";
+  src: url("./assets/JiwakuMenanti-qZGO2.otf");
+}
+
+/* Title */
+@font-face {
+  font-family: "tenkai";
+  src: url("./assets/TenkaidemoRegular-OGKYe.otf");
+}
+
+/* Animation */
+@keyframes brushStroke {
+  0% {
+    clip-path: polygon(0% 50%, 0% 50%, 0% 50%, 0% 50%);
+    opacity: 0.5;
+  }
+  50% {
+    clip-path: polygon(0% 50%, 50% 45%, 100% 50%, 50% 55%);
+    opacity: 1;
+  }
+  100% {
+    clip-path: polygon(0% 50%, 100% 40%, 100% 60%, 0% 50%);
+    opacity: 1;
+  }
+}
+
+.brush {
+  width: 300px;
+  height: 100px;
+  background: linear-gradient(to right, #d35400, #e74c3c);
+  animation: brushStroke 1.5s ease-in-out forwards;
+  position: relative;
+}
